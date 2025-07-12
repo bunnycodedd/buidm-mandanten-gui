@@ -1,12 +1,14 @@
 package me.eva.buidmgui;
 
-import me.eva.buidmgui.gui.MainPage;
+import me.eva.buidmgui.gui.LoginPage;
 
 import javax.swing.*;
+import java.util.logging.Logger;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+
 public class Main {
+
+    public static final Logger LOGGER = Logger.getLogger("MANDANTENGUI");
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
@@ -21,7 +23,7 @@ public class Main {
 
     private static void launch() throws UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException, IllegalAccessException {
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        MainPage frame = new MainPage();
+        LoginPage frame = new LoginPage();
     }
 
 }
