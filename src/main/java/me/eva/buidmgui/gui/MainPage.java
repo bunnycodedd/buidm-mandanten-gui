@@ -4,19 +4,22 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import me.eva.buidmgui.controller.MenuBarHandlers;
-import me.eva.buidmgui.controller.PopupMouseAdapter;
 import me.eva.buidmgui.model.EntityConfig;
 import me.eva.buidmgui.net.DatabaseConnection;
 import me.eva.buidmgui.util.EntityConfigTableModel;
+import me.eva.buidmgui.util.RightClickMouseListener;
+import me.eva.buidmgui.util.Utilities;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.TreeSelectionEvent;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeSelectionModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.sql.SQLException;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
 public class MainPage extends JFrame {
@@ -25,7 +28,7 @@ public class MainPage extends JFrame {
     private JTree explorer;
     private JTabbedPane tabbedPane1;
     private JSplitPane mainSplitPane;
-    private JLabel testLabel;
+    private JLabel valueLabel;
     private JTextField treeSearchField;
 
 
@@ -130,7 +133,8 @@ public class MainPage extends JFrame {
         // ###################### TREE ######################
         DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("Mandanten");
         explorer = new JTree(rootNode);
-
+        explorer.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        explorer.addMouseListener(Utilities.getTreeSelectionListener(explorer));
 
         try {
             ArrayList<EntityConfig> entityConfigs = databaseConnection.getEntityConfigs();
@@ -143,15 +147,17 @@ public class MainPage extends JFrame {
 
                     explorer.getSelectionModel().addTreeSelectionListener(e -> {
                         DefaultMutableTreeNode node = (DefaultMutableTreeNode) explorer.getLastSelectedPathComponent();
+                        String parameterValue = entityConfig.getParameters().get(node.getUserObject().toString());
 
-                        testLabel.setText(entityConfig.getParameters().get(node.getUserObject().toString()));
+                        valueLabel.setText("Wert: " + entityConfig.getParameters().getOrDefault(node.getUserObject().toString(), ""));
+
                     });
                     paramsNode.add(paramNode);
                 });
 
                 rootNode.add(entityNode);
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             JOptionPane.showMessageDialog(this, e.getMessage(), "Fehler", JOptionPane.ERROR_MESSAGE);
             dispose();
             System.exit(1);
@@ -198,9 +204,9 @@ public class MainPage extends JFrame {
         panel3.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
         root.add(panel3, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         panel3.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
-        testLabel = new JLabel();
-        testLabel.setText("Test: ");
-        panel3.add(testLabel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        valueLabel = new JLabel();
+        valueLabel.setText("Test: ");
+        panel3.add(valueLabel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer1 = new Spacer();
         panel3.add(spacer1, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
     }

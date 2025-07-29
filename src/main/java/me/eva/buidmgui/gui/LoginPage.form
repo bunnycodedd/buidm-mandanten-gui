@@ -69,6 +69,7 @@
             <constraints/>
             <properties>
               <horizontalAlignment value="4"/>
+              <selected value="false"/>
               <text value="Verbinden"/>
             </properties>
           </component>

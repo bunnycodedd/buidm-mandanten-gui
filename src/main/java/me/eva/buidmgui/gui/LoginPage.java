@@ -55,6 +55,7 @@ public class LoginPage extends JFrame {
     private void createUIComponents() {
         // TODO: place custom component creation code here
         hostsComboBox = new JComboBox<>();
+        hostsComboBox.addItem("192.168.178.91");
         hostsComboBox.addItem("DEV");
         hostsComboBox.addItem("REF");
         hostsComboBox.addItem("PROD");
@@ -92,6 +93,7 @@ public class LoginPage extends JFrame {
         root.add(panel1, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_SOUTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         connectButton = new JButton();
         connectButton.setHorizontalAlignment(4);
+        connectButton.setSelected(false);
         connectButton.setText("Verbinden");
         panel1.add(connectButton);
         cancelButton = new JButton();
