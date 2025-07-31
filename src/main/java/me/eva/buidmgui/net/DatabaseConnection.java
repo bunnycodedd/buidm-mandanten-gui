@@ -36,6 +36,52 @@ public class DatabaseConnection {
         }
     }
 
+    public String[][] getEntityConfigsRaw() {
+        try {
+            ResultSet rows = connection.prepareStatement("SELECT * FROM ENTITYCONFIGURATION").executeQuery();
+            List<String[]> list = new ArrayList<>();
+            while (rows.next()) {
+                list.add(new String[]{
+                        rows.getString("ENTITYNAME"),
+                        rows.getString("PARAMETER_NAME"),
+                        rows.getString("PARAMETER_VALUE"),
+                        rows.getString("ACTIVE"),
+                });
+            }
+            String[][] rowsArray = new String[list.size()][4];
+            list.toArray(rowsArray);
+            return rowsArray;
+        } catch (SQLException e) {
+            Main.LOGGER.severe(e.getMessage());
+            return new String[][]{};
+        }
+    }
+
+    public String[][] getEntityLocationsRaw() {
+        try {
+            ResultSet rows = connection.prepareStatement("SELECT * FROM ENTITYCONFIGURATION").executeQuery();
+            List<String[]> list = new ArrayList<>();
+            while (rows.next()) {
+                list.add(new String[]{
+                        rows.getString("ENTITYNAME"),
+                        rows.getString("LOCATION_ID"),
+                        rows.getString("LOCATION_NAME"),
+                        rows.getString("LOCATION_STREET"),
+                        rows.getString("LOCATION_POSTCODE"),
+                        rows.getString("LOCATION_CITY"),
+                        rows.getString("LOCATION_COUNTRY"),
+                        rows.getString("ACTIVE"),
+                });
+            }
+            String[][] rowsArray = new String[list.size()][4];
+            list.toArray(rowsArray);
+            return rowsArray;
+        } catch (SQLException e) {
+            Main.LOGGER.severe(e.getMessage());
+            return new String[][]{};
+        }
+    }
+
     public ArrayList<EntityConfig> getEntityConfigs() throws SQLException {
         Main.LOGGER.info("Getting entity configs...");
 
