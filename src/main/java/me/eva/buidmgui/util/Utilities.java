@@ -1,8 +1,10 @@
 package me.eva.buidmgui.util;
 
 import javax.swing.*;
+import javax.swing.plaf.basic.BasicTreeUI;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -45,21 +47,5 @@ public class Utilities {
             else builder.append(treeNode.toString());
         }
         return builder.toString();
-    }
-
-    public static MouseListener getTreeSelectionListener(JTree tree) {
-        MouseListener ml = new MouseAdapter() {
-            public void mousePressed(MouseEvent e) {
-                if (SwingUtilities.isRightMouseButton(e)) {
-                    int selRow = tree.getRowForLocation(e.getX(), e.getY());
-                    TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
-                    tree.setSelectionPath(selPath);
-                    if (selRow > -1) {
-                        tree.setSelectionRow(selRow);
-                    }
-                }
-            }
-        };
-        return ml;
     }
 }

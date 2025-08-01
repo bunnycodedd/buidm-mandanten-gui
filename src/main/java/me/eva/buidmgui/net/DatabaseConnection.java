@@ -59,11 +59,11 @@ public class DatabaseConnection {
 
     public String[][] getEntityLocationsRaw() {
         try {
-            ResultSet rows = connection.prepareStatement("SELECT * FROM ENTITYCONFIGURATION").executeQuery();
+            ResultSet rows = connection.prepareStatement("SELECT * FROM ENTITYLOCATION").executeQuery();
             List<String[]> list = new ArrayList<>();
             while (rows.next()) {
                 list.add(new String[]{
-                        rows.getString("ENTITYNAME"),
+                        rows.getString("ENTITY_NAME"),
                         rows.getString("LOCATION_ID"),
                         rows.getString("LOCATION_NAME"),
                         rows.getString("LOCATION_STREET"),
@@ -73,7 +73,32 @@ public class DatabaseConnection {
                         rows.getString("ACTIVE"),
                 });
             }
-            String[][] rowsArray = new String[list.size()][4];
+            String[][] rowsArray = new String[list.size()][8];
+            list.toArray(rowsArray);
+            return rowsArray;
+        } catch (SQLException e) {
+            Main.LOGGER.severe(e.getMessage());
+            return new String[][]{};
+        }
+    }
+
+    public String[][] getEntityOrganisationsRaw() {
+        try {
+            ResultSet rows = connection.prepareStatement("SELECT * FROM ENTITYORGANISATION").executeQuery();
+            List<String[]> list = new ArrayList<>();
+            while (rows.next()) {
+                list.add(new String[]{
+                        rows.getString("ENTITY_NAME"),
+                        rows.getString("ORGID"),
+                        rows.getString("ORGNAME"),
+                        rows.getString("ORGLEVEL"),
+                        rows.getString("ORGTYPE"),
+                        rows.getString("PARENTID"),
+                        rows.getString("ACTIVE"),
+                        rows.getString("OEKEY"),
+                });
+            }
+            String[][] rowsArray = new String[list.size()][8];
             list.toArray(rowsArray);
             return rowsArray;
         } catch (SQLException e) {

@@ -1,16 +1,30 @@
 package me.eva.buidmgui;
 
 import me.eva.buidmgui.gui.LoginPage;
+import me.eva.buidmgui.gui.MainPage;
+import me.eva.buidmgui.net.DatabaseConnection;
 
 import javax.swing.*;
+import java.sql.SQLException;
 import java.util.logging.Logger;
 
 
 public class Main {
 
     public static final Logger LOGGER = Logger.getLogger("MANDANTENGUI");
+    public static String ARG_USER;
+    public static String ARG_PASSWORD;
+    public static String ARG_HOST;
 
     public static void main(String[] args) {
+
+        // Positional args: user password host
+        if(args.length == 3) {
+            ARG_USER = args[0];
+            ARG_PASSWORD = args[1];
+            ARG_HOST = args[2];
+        }
+
         SwingUtilities.invokeLater(() -> {
             try {
                 launch();
@@ -23,7 +37,21 @@ public class Main {
 
     private static void launch() throws UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException, IllegalAccessException {
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        LoginPage frame = new LoginPage();
+        if(ARG_USER == null) {
+            LoginPage frame = new LoginPage();
+        } else {
+            try {
+                DatabaseConnection connection = new DatabaseConnection(
+                        ARG_HOST,
+                        "identityiqPlugin",
+                        ARG_USER,
+                        ARG_PASSWORD
+                );
+                MainPage mainPage = new MainPage(connection);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 }

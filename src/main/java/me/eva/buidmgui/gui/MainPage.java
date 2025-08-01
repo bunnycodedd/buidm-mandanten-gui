@@ -5,24 +5,19 @@ import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import me.eva.buidmgui.controller.MenuBarHandlers;
 import me.eva.buidmgui.model.EntityConfig;
+import me.eva.buidmgui.model.TreeParameterNode;
+import me.eva.buidmgui.model.TreeSelectionListenerImpl;
 import me.eva.buidmgui.net.DatabaseConnection;
 import me.eva.buidmgui.util.EntityConfigTableModel;
-import me.eva.buidmgui.util.RightClickMouseListener;
-import me.eva.buidmgui.util.Utilities;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
-import javax.swing.event.TreeSelectionEvent;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeSelectionModel;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class MainPage extends JFrame {
     private JPanel root;
@@ -34,6 +29,7 @@ public class MainPage extends JFrame {
     private JTextField treeSearchField;
     private JTable entityLocationTable;
     private JTable entityOrganisationTable;
+    private JPanel editorPanel;
 
 
     private EntityConfigTableModel entityConfigTableModel;
@@ -49,6 +45,7 @@ public class MainPage extends JFrame {
         $$$setupUI$$$();
         setTitle("Titel hier einfügen");
         setContentPane(root);
+        mainSplitPane.setDividerLocation(250);
 
         setJMenuBar(createMenuBar());
 
@@ -132,19 +129,25 @@ public class MainPage extends JFrame {
                 return false;
             }
         };
-        entityLocationTable = new JTable(new DefaultTableModel(databaseConnection.getEntityLocationsRaw(), new String[]{"ENTITYNAME", "LOCATION_ID", "LOCATION_NAME", "LOCATION_STREET", "LOCATION_POSTCODE", "LOCATION_CITY", "LOCATION_COUNTRY", "ACTIVE"})) {
+        entityLocationTable = new JTable(new DefaultTableModel(databaseConnection.getEntityLocationsRaw(), new String[]{"ENTITY_NAME", "LOCATION_ID", "LOCATION_NAME", "LOCATION_STREET", "LOCATION_POSTCODE", "LOCATION_CITY", "LOCATION_COUNTRY", "ACTIVE"})) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
         };
 
+        entityOrganisationTable = new JTable(new DefaultTableModel(databaseConnection.getEntityOrganisationsRaw(), new Object[]{"ENTITY_NAME", "ORGID", "ORGNAME", "ORGNAME", "ORGLEVEL", "ORGTYPE", "PARENTID", "ACTIVE", "OEKEY"})) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
 
         // ###################### TREE ######################
         DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("Mandanten");
         explorer = new JTree(rootNode);
         explorer.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-        explorer.addMouseListener(Utilities.getTreeSelectionListener(explorer));
+        explorer.addTreeSelectionListener(new TreeSelectionListenerImpl(this));
 
         try {
             ArrayList<EntityConfig> entityConfigs = databaseConnection.getEntityConfigs();
@@ -153,7 +156,7 @@ public class MainPage extends JFrame {
                 DefaultMutableTreeNode paramsNode = new DefaultMutableTreeNode("Parameter");
                 entityNode.add(paramsNode);
                 entityConfig.getParameters().forEach((param, value) -> {
-                    DefaultMutableTreeNode paramNode = new DefaultMutableTreeNode(param);
+                    DefaultMutableTreeNode paramNode = new DefaultMutableTreeNode(new TreeParameterNode(this, param, value));
 
                     explorer.getSelectionModel().addTreeSelectionListener(e -> {
                         DefaultMutableTreeNode node = (DefaultMutableTreeNode) explorer.getLastSelectedPathComponent();
@@ -193,35 +196,43 @@ public class MainPage extends JFrame {
         mainSplitPane.setOrientation(1);
         root.add(mainSplitPane, new GridConstraints(0, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(100, 100), new Dimension(200, 200), null, 0, false));
         mainSplitPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
-        tabbedPane1 = new JTabbedPane();
-        mainSplitPane.setRightComponent(tabbedPane1);
         final JPanel panel1 = new JPanel();
-        panel1.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
-        tabbedPane1.addTab("Entity Config", panel1);
+        panel1.setLayout(new GridLayoutManager(2, 1, new Insets(0, 0, 0, 0), -1, -1));
+        mainSplitPane.setLeftComponent(panel1);
         final JScrollPane scrollPane1 = new JScrollPane();
-        panel1.add(scrollPane1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
-        scrollPane1.setViewportView(entityConfigTable);
+        panel1.add(scrollPane1, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        explorer.setEnabled(true);
+        scrollPane1.setViewportView(explorer);
+        treeSearchField = new JTextField();
+        panel1.add(treeSearchField, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        final JSplitPane splitPane1 = new JSplitPane();
+        splitPane1.setDividerLocation(517);
+        mainSplitPane.setRightComponent(splitPane1);
+        tabbedPane1 = new JTabbedPane();
+        splitPane1.setLeftComponent(tabbedPane1);
         final JPanel panel2 = new JPanel();
         panel2.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
-        tabbedPane1.addTab("Entity Location", panel2);
+        tabbedPane1.addTab("Entity Config", panel2);
         final JScrollPane scrollPane2 = new JScrollPane();
         panel2.add(scrollPane2, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
-        scrollPane2.setViewportView(entityLocationTable);
+        scrollPane2.setViewportView(entityConfigTable);
         final JPanel panel3 = new JPanel();
         panel3.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
-        tabbedPane1.addTab("Entity Organisation", panel3);
+        tabbedPane1.addTab("Entity Location", panel3);
         final JScrollPane scrollPane3 = new JScrollPane();
         panel3.add(scrollPane3, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
-        scrollPane3.setViewportView(entityOrganisationTable);
+        scrollPane3.setViewportView(entityLocationTable);
         final JPanel panel4 = new JPanel();
-        panel4.setLayout(new GridLayoutManager(2, 1, new Insets(0, 0, 0, 0), -1, -1));
-        mainSplitPane.setLeftComponent(panel4);
+        panel4.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+        tabbedPane1.addTab("Entity Organisation", panel4);
         final JScrollPane scrollPane4 = new JScrollPane();
-        panel4.add(scrollPane4, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        explorer.setEnabled(true);
-        scrollPane4.setViewportView(explorer);
-        treeSearchField = new JTextField();
-        panel4.add(treeSearchField, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        panel4.add(scrollPane4, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        scrollPane4.setViewportView(entityOrganisationTable);
+        editorPanel = new JPanel();
+        editorPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        editorPanel.setMaximumSize(new Dimension(-1, -1));
+        editorPanel.setPreferredSize(new Dimension(-1, -1));
+        splitPane1.setRightComponent(editorPanel);
         final JPanel panel5 = new JPanel();
         panel5.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
         root.add(panel5, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
@@ -254,5 +265,9 @@ public class MainPage extends JFrame {
 
     public JTree getExplorer() {
         return explorer;
+    }
+
+    public JPanel getEditorPanel() {
+        return editorPanel;
     }
 }
