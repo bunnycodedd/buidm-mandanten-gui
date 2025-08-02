@@ -17,7 +17,6 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeSelectionModel;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class MainPage extends JFrame {
     private JPanel root;
@@ -30,11 +29,12 @@ public class MainPage extends JFrame {
     private JTable entityLocationTable;
     private JTable entityOrganisationTable;
     private JPanel editorPanel;
+    private JSplitPane splitPaneWithEditor;
 
 
     private EntityConfigTableModel entityConfigTableModel;
 
-    private DatabaseConnection databaseConnection;
+    private final DatabaseConnection databaseConnection;
 
     private static MainPage INSTANCE;
 
@@ -205,11 +205,12 @@ public class MainPage extends JFrame {
         scrollPane1.setViewportView(explorer);
         treeSearchField = new JTextField();
         panel1.add(treeSearchField, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
-        final JSplitPane splitPane1 = new JSplitPane();
-        splitPane1.setDividerLocation(517);
-        mainSplitPane.setRightComponent(splitPane1);
+        splitPaneWithEditor = new JSplitPane();
+        splitPaneWithEditor.setDividerLocation(532);
+        splitPaneWithEditor.setMaximumSize(new Dimension(500, -1));
+        mainSplitPane.setRightComponent(splitPaneWithEditor);
         tabbedPane1 = new JTabbedPane();
-        splitPane1.setLeftComponent(tabbedPane1);
+        splitPaneWithEditor.setLeftComponent(tabbedPane1);
         final JPanel panel2 = new JPanel();
         panel2.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         tabbedPane1.addTab("Entity Config", panel2);
@@ -229,10 +230,15 @@ public class MainPage extends JFrame {
         panel4.add(scrollPane4, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         scrollPane4.setViewportView(entityOrganisationTable);
         editorPanel = new JPanel();
-        editorPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        editorPanel.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+        editorPanel.setAlignmentX(0.0f);
+        editorPanel.setAlignmentY(0.0f);
         editorPanel.setMaximumSize(new Dimension(-1, -1));
+        editorPanel.setMinimumSize(new Dimension(-1, -1));
+        editorPanel.setName("Editor");
         editorPanel.setPreferredSize(new Dimension(-1, -1));
-        splitPane1.setRightComponent(editorPanel);
+        editorPanel.setToolTipText("Editor");
+        splitPaneWithEditor.setRightComponent(editorPanel);
         final JPanel panel5 = new JPanel();
         panel5.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
         root.add(panel5, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
@@ -269,5 +275,9 @@ public class MainPage extends JFrame {
 
     public JPanel getEditorPanel() {
         return editorPanel;
+    }
+
+    public JSplitPane getEditorSplitPane() {
+        return splitPaneWithEditor;
     }
 }

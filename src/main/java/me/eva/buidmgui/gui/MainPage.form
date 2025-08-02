@@ -56,12 +56,13 @@
               </component>
             </children>
           </grid>
-          <splitpane id="754de">
+          <splitpane id="754de" binding="splitPaneWithEditor">
             <constraints>
               <splitpane position="right"/>
             </constraints>
             <properties>
-              <dividerLocation value="517"/>
+              <dividerLocation value="532"/>
+              <maximumSize width="500" height="-1"/>
             </properties>
             <border type="none"/>
             <children>
@@ -143,13 +144,19 @@
                   </grid>
                 </children>
               </tabbedpane>
-              <grid id="f38a0" binding="editorPanel" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="0">
+              <grid id="f38a0" binding="editorPanel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                <margin top="0" left="0" bottom="0" right="0"/>
                 <constraints>
                   <splitpane position="right"/>
                 </constraints>
                 <properties>
+                  <alignmentX value="0.0"/>
+                  <alignmentY value="0.0"/>
                   <maximumSize width="-1" height="-1"/>
+                  <minimumSize width="-1" height="-1"/>
+                  <name value="Editor"/>
                   <preferredSize width="-1" height="-1"/>
+                  <toolTipText value="Editor"/>
                 </properties>
                 <border type="none">
                   <color color="-16712964"/>

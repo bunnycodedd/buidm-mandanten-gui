@@ -1,6 +1,8 @@
 package me.eva.buidmgui.model;
 
 import com.intellij.uiDesigner.core.GridConstraints;
+import com.intellij.uiDesigner.core.GridLayoutManager;
+import com.intellij.uiDesigner.core.Spacer;
 import me.eva.buidmgui.gui.MainPage;
 
 import javax.swing.*;
@@ -26,7 +28,7 @@ public class TreeSelectionListenerImpl implements TreeSelectionListener {
 
         if (selectedNode.getUserObject() instanceof IHasConfigMenu) {
             editorPanel.removeAll();
-            editorPanel.add(((IHasConfigMenu) selectedNode.getUserObject()).getPanel(), new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(150, -1), null, 0, false),0);
+            editorPanel.add(((IHasConfigMenu) selectedNode.getUserObject()).getPanel(), new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         } else {
             editorPanel.removeAll();
         }
