@@ -13,6 +13,8 @@ public class SingleValueEditor extends JPanel {
     private JTextField valueEditField;
     private JLabel valueLabel;
     private JPanel root;
+    private JButton applyButton;
+    private boolean dirty;
 
     public SingleValueEditor(String valueName, String currentValue) {
         $$$setupUI$$$();
@@ -20,7 +22,14 @@ public class SingleValueEditor extends JPanel {
         valueEditField.setText(currentValue);
 
         add(root);
+
+        applyButton.addActionListener(e -> {
+            //MainPage.getInstance().getDatabaseConnection().writeEntityParameterChange();
+        });
+
         setVisible(true);
+        revalidate();
+        repaint();
     }
 
     /**
@@ -32,15 +41,18 @@ public class SingleValueEditor extends JPanel {
      */
     private void $$$setupUI$$$() {
         root = new JPanel();
-        root.setLayout(new GridLayoutManager(3, 1, new Insets(0, 0, 0, 0), -1, -1));
-        root.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(new Color(-16712462)), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, new Color(-197382)));
+        root.setLayout(new GridLayoutManager(4, 1, new Insets(0, 0, 0, 0), 0, 0));
+        root.setBorder(BorderFactory.createTitledBorder(null, "", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, new Color(-197382)));
         valueEditField = new JTextField();
-        root.add(valueEditField, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(250, -1), null, 0, false));
-        final Spacer spacer1 = new Spacer();
-        root.add(spacer1, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        root.add(valueEditField, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, new Dimension(250, -1), new Dimension(250, -1), null, 0, false));
         valueLabel = new JLabel();
         valueLabel.setText("Test");
         root.add(valueLabel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        applyButton = new JButton();
+        applyButton.setText("Übernehmen");
+        root.add(applyButton, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final Spacer spacer1 = new Spacer();
+        root.add(spacer1, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
     }
 
     /**

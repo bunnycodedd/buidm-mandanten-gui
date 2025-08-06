@@ -1,13 +1,9 @@
 package me.eva.buidmgui.util;
 
 import javax.swing.*;
-import javax.swing.plaf.basic.BasicTreeUI;
 import javax.swing.tree.TreeNode;
-import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.*;
+import java.util.HashMap;
 
 public class Utilities {
 
@@ -47,5 +43,25 @@ public class Utilities {
             else builder.append(treeNode.toString());
         }
         return builder.toString();
+    }
+
+    public static TreeNode[] stringToTreePath(String path) {
+        String[] strings = path.split("/");
+        TreeNode[] treeNodes = new TreeNode[strings.length];
+        /*for (int i = 0; i < treeNodes.length; i++) {
+            
+        }*/
+        return treeNodes;
+    }
+
+    public static void shiftComponents(JPanel panel, Component component, int index) {
+        HashMap<Integer, Component> components = new HashMap<>();
+        for (int i = 0; i < panel.getComponents().length; i++) {
+            components.put(i, panel.getComponents()[i]);
+        }
+        components.forEach((i, comp) -> {
+            if(i > index) i++;
+        });
+        System.out.println(components);
     }
 }

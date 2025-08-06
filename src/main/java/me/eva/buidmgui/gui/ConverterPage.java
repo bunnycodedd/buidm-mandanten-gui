@@ -14,7 +14,6 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Scanner;
-import java.util.logging.Level;
 
 public class ConverterPage extends JDialog {
     private JPanel root;
@@ -174,7 +173,7 @@ public class ConverterPage extends JDialog {
                                 textPane.setText(textPane.getText() + line + System.lineSeparator());
                             });
                 } catch (Exception ex) {
-                    Main.LOGGER.severe("[" + ex.getClass().getSimpleName() + "] " + ex.getMessage());
+                    Main.LOGGER.error("[" + ex.getClass().getSimpleName() + "] " + ex.getMessage());
                     JOptionPane.showMessageDialog(parent, "Es gab einen Fehler beim Lesen der Datei. Sind alle Zeilen konform mit dem Tabellenkopf?", "Konvertierungsfehler", JOptionPane.ERROR_MESSAGE);
                     return;
                 }

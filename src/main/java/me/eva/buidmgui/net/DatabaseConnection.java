@@ -3,12 +3,9 @@ package me.eva.buidmgui.net;
 import me.eva.buidmgui.Main;
 import me.eva.buidmgui.model.EntityConfig;
 
-import javax.security.auth.login.Configuration;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class DatabaseConnection {
 
@@ -52,7 +49,7 @@ public class DatabaseConnection {
             list.toArray(rowsArray);
             return rowsArray;
         } catch (SQLException e) {
-            Main.LOGGER.severe(e.getMessage());
+            Main.LOGGER.error(e.getMessage());
             return new String[][]{};
         }
     }
@@ -77,7 +74,7 @@ public class DatabaseConnection {
             list.toArray(rowsArray);
             return rowsArray;
         } catch (SQLException e) {
-            Main.LOGGER.severe(e.getMessage());
+            Main.LOGGER.error(e.getMessage());
             return new String[][]{};
         }
     }
@@ -102,7 +99,7 @@ public class DatabaseConnection {
             list.toArray(rowsArray);
             return rowsArray;
         } catch (SQLException e) {
-            Main.LOGGER.severe(e.getMessage());
+            Main.LOGGER.error(e.getMessage());
             return new String[][]{};
         }
     }
@@ -140,5 +137,12 @@ public class DatabaseConnection {
         Main.LOGGER.info("Loaded " + countResult.getInt("COUNT(*)") + " entity configs.");
 
         return uniqueEntities;
+    }
+
+    public void writeEntityParameterChange(String entityName, String parameterName, String parameterValue) throws SQLException {
+        int changedRows = connection.prepareStatement(String.format("UPDATE ENTITYCONFIGURATION SET PARAMETER_VALUE=%s WHERE ENTITYNAME=%s AND PARAMETER_NAME=%s", parameterValue, entityName, parameterName)).executeUpdate();
+        if(changedRows == 0) {
+            System.out.println("No changes were made.");
+        }
     }
 }

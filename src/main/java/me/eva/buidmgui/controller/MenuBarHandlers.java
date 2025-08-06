@@ -50,7 +50,7 @@ public class MenuBarHandlers {
                 ((DefaultTableModel) MainPage.getInstance().getEntityLocationTable().getModel()).addRow(data[i]);
             }
         } catch (FileNotFoundException e) {
-            Main.LOGGER.severe(e.getMessage());
+            Main.LOGGER.error(e.getMessage());
         }
     }
 
@@ -88,7 +88,7 @@ public class MenuBarHandlers {
                 ((DefaultTableModel) MainPage.getInstance().getEntityConfigTable().getModel()).addRow(data[i]);
             }
         } catch (FileNotFoundException e) {
-            Main.LOGGER.severe(e.getMessage());
+            Main.LOGGER.error(e.getMessage());
         }
     }
 }
