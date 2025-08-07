@@ -9,10 +9,8 @@ public class TreeParameterNode implements IHasConfigMenu {
 
     private String paramName;
     private String paramValue;
-    private MainPage mainPage;
 
-    public TreeParameterNode(MainPage page, String paramName, String paramValue) {
-        this.mainPage = page;
+    public TreeParameterNode(String paramName, String paramValue) {
         this.paramName = paramName;
         this.paramValue = paramValue;
     }

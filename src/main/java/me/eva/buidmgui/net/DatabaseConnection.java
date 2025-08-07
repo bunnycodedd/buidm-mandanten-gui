@@ -1,11 +1,16 @@
 package me.eva.buidmgui.net;
 
 import me.eva.buidmgui.Main;
+import me.eva.buidmgui.gui.MainPage;
 import me.eva.buidmgui.model.EntityConfig;
+import me.eva.buidmgui.model.EntityLocation;
+import me.eva.buidmgui.model.EntityOrganisation;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class DatabaseConnection {
 
@@ -104,44 +109,126 @@ public class DatabaseConnection {
         }
     }
 
-    public ArrayList<EntityConfig> getEntityConfigs() throws SQLException {
-        Main.LOGGER.info("Getting entity configs...");
+    private ArrayList<EntityConfig> readEntityConfigs() throws SQLException {
+        System.out.println("Getting entity configs...");
 
-        PreparedStatement statement = connection.prepareStatement("SELECT * FROM ENTITYCONFIGURATION WHERE PARAMETER_NAME='ENTITYNAME'");
-
+        PreparedStatement entityStatement = connection.prepareStatement("SELECT * FROM ENTITYCONFIGURATION WHERE PARAMETER_NAME='ENTITYNAME'");
         ArrayList<EntityConfig> uniqueEntities = new ArrayList<>();
 
-        ResultSet resultSet = statement.executeQuery();
-        while (resultSet.next()) {
-            String entityName = resultSet.getString("ENTITYNAME");
-            String mappedName = resultSet.getString("PARAMETER_VALUE");
+        HashMap<String, String> parameters = new HashMap<>();
 
-            if(uniqueEntities.stream().anyMatch(entityConfig -> entityConfig.getEntityName().equals(entityName))) {
+        ResultSet entityResultSet = entityStatement.executeQuery();
+        while (entityResultSet.next()) {
+            String entityName = entityResultSet.getString("ENTITYNAME");
+            String mappedName = entityResultSet.getString("PARAMETER_VALUE");
+
+            if (uniqueEntities.stream().anyMatch(entityConfig -> entityConfig.getEntityName().equals(entityName))) {
                 continue;
             }
-            EntityConfig entityConfig = new EntityConfig(entityName);
-            System.out.println("SELECT * FROM ENTITYCONFIGURATION WHERE ENTITYNAME='" + mappedName + "'");
+            MainPage.getInstance().writeLineToConsole("SELECT * FROM ENTITYCONFIGURATION WHERE ENTITYNAME='" + mappedName + "'");
+
             ResultSet params = connection.prepareStatement("SELECT * FROM ENTITYCONFIGURATION WHERE ENTITYNAME='" + mappedName + "'").executeQuery();
 
             while (params.next()) {
                 String paramName = params.getString("PARAMETER_NAME");
                 String paramValue = params.getString("PARAMETER_VALUE");
 
-                entityConfig.getParameters().put(paramName, paramValue);
+                parameters.put(paramName, paramValue);
             }
+
+            EntityConfig entityConfig = new EntityConfig(entityName, mappedName);
+            entityConfig.getParameters().putAll(parameters);
+
             uniqueEntities.add(entityConfig);
         }
-
-        ResultSet countResult = connection.prepareStatement("SELECT COUNT(*) FROM ENTITYCONFIGURATION").executeQuery();
-        countResult.next();
-        Main.LOGGER.info("Loaded " + countResult.getInt("COUNT(*)") + " entity configs.");
 
         return uniqueEntities;
     }
 
+    public ArrayList<EntityLocation> readEntityLocations(ArrayList<EntityConfig> entityConfigs) throws SQLException {
+        ArrayList<EntityLocation> entityLocations = new ArrayList<>();
+
+        for (EntityConfig entityConfig : entityConfigs) {
+            MainPage.getInstance().writeLineToConsole("SELECT * FROM ENTITYLOCATION WHERE ENTITY_NAME='" + entityConfig.getFriendlyName() + "'");
+
+            PreparedStatement locationsStatement = connection.prepareStatement("SELECT * FROM ENTITYLOCATION WHERE ENTITY_NAME='" + entityConfig.getFriendlyName() + "'");
+            ResultSet locationsResultSet = locationsStatement.executeQuery();
+
+            while (locationsResultSet.next()) {
+                int locationId = locationsResultSet.getInt("LOCATION_ID");
+                String locationName = locationsResultSet.getString("LOCATION_NAME");
+                String locationStreet = locationsResultSet.getString("LOCATION_STREET");
+                String locationPostcode = locationsResultSet.getString("LOCATION_POSTCODE");
+                String locationCity = locationsResultSet.getString("LOCATION_CITY");
+                String locationCountry = locationsResultSet.getString("LOCATION_COUNTRY");
+                int active = locationsResultSet.getInt("ACTIVE");
+
+                entityLocations.add(new EntityLocation(entityConfig, locationId, locationName, locationStreet, locationPostcode, locationCity, locationCountry, active));
+            }
+        }
+        return entityLocations;
+    }
+
+    private ArrayList<EntityOrganisation> readEntityOrganisations(ArrayList<EntityConfig> entityConfigs) throws SQLException {
+        ArrayList<EntityOrganisation> organisations = new ArrayList<>();
+
+        for (EntityConfig entityConfig : entityConfigs) {
+            MainPage.getInstance().writeLineToConsole("SELECT * FROM ENTITYORGANISATION WHERE ENTITY_NAME='" + entityConfig.getFriendlyName() + "'");
+
+            PreparedStatement locationsStatement = connection.prepareStatement("SELECT * FROM ENTITYORGANISATION WHERE ENTITY_NAME='" + entityConfig.getFriendlyName() + "'");
+            ResultSet locationsResultSet = locationsStatement.executeQuery();
+            while (locationsResultSet.next()) {
+                int orgId = locationsResultSet.getInt("ORGID");
+                String orgName = locationsResultSet.getString("ORGNAME");
+                int orgLevel = locationsResultSet.getInt("ORGLEVEL");
+                String orgType = locationsResultSet.getString("ORGTYPE");
+                int parentId = locationsResultSet.getInt("PARENTID");
+                int active = locationsResultSet.getInt("ACTIVE");
+
+                organisations.add(new EntityOrganisation(entityConfig, orgId, orgName, orgLevel, orgType, parentId, active));
+            }
+        }
+        return organisations;
+    }
+
+    public ArrayList<EntityConfig> getEntityConfigs() throws SQLException {
+        ArrayList<EntityConfig> entityConfigs = readEntityConfigs();
+        ArrayList<EntityLocation> entityLocations = readEntityLocations(entityConfigs);
+        ArrayList<EntityOrganisation> entityOrganisations = readEntityOrganisations(entityConfigs);
+
+        for (EntityConfig entityConfig : entityConfigs) {
+            ArrayList<EntityLocation> joiner = new ArrayList<>();
+            for (EntityLocation entityLocation : entityLocations) {
+                if (entityLocation.getEntityName().equals(entityConfig.getFriendlyName())) {
+                    joiner.add(entityLocation);
+                }
+            }
+            entityConfig.getLocations().addAll(joiner);
+        }
+
+        for (EntityConfig entityConfig : entityConfigs) {
+            ArrayList<EntityOrganisation> joiner = new ArrayList<>();
+            for (EntityOrganisation entityOrganisation : entityOrganisations) {
+                if (entityOrganisation.getEntityName().equals(entityConfig.getFriendlyName())) {
+                    joiner.add(entityOrganisation);
+                }
+            }
+            entityConfig.getOrganisations().addAll(joiner);
+        }
+
+        for (EntityConfig entityConfig : entityConfigs) {
+            System.out.println(entityConfig.getFriendlyName());
+            for (EntityLocation location : entityConfig.getLocations()) {
+                System.out.println("\t" + location.getEntityName());
+            }
+        }
+
+        return entityConfigs;
+    }
+
     public void writeEntityParameterChange(String entityName, String parameterName, String parameterValue) throws SQLException {
         int changedRows = connection.prepareStatement(String.format("UPDATE ENTITYCONFIGURATION SET PARAMETER_VALUE=%s WHERE ENTITYNAME=%s AND PARAMETER_NAME=%s", parameterValue, entityName, parameterName)).executeUpdate();
-        if(changedRows == 0) {
+        if (changedRows == 0) {
             System.out.println("No changes were made.");
         }
     }

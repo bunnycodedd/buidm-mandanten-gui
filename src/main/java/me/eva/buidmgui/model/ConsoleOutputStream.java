@@ -3,6 +3,7 @@ package me.eva.buidmgui.model;
 import javax.swing.*;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 
 public class ConsoleOutputStream extends OutputStream {
 
@@ -14,7 +15,6 @@ public class ConsoleOutputStream extends OutputStream {
 
     @Override
     public void write(int b) throws IOException {
-
         textPane.setText(textPane.getText() + (char) b);
     }
 

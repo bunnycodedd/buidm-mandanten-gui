@@ -1,9 +1,14 @@
 package me.eva.buidmgui.util;
 
 import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
 import java.awt.*;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 public class Utilities {
 
@@ -45,13 +50,12 @@ public class Utilities {
         return builder.toString();
     }
 
-    public static TreeNode[] stringToTreePath(String path) {
+    public static TreePath stringToTreePath(String path) {
         String[] strings = path.split("/");
-        TreeNode[] treeNodes = new TreeNode[strings.length];
-        /*for (int i = 0; i < treeNodes.length; i++) {
-            
-        }*/
-        return treeNodes;
+
+        return new TreePath(Arrays.stream(strings)
+                .map(s -> new DefaultMutableTreeNode())
+                .toArray());
     }
 
     public static void shiftComponents(JPanel panel, Component component, int index) {
@@ -60,7 +64,7 @@ public class Utilities {
             components.put(i, panel.getComponents()[i]);
         }
         components.forEach((i, comp) -> {
-            if(i > index) i++;
+            if (i > index) i++;
         });
         System.out.println(components);
     }

@@ -17,8 +17,12 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeSelectionModel;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class MainPage extends JFrame {
     private JPanel root;
@@ -33,6 +37,7 @@ public class MainPage extends JFrame {
     private JPanel editorPanel;
     private JSplitPane splitPaneWithEditor;
     private JTextPane consoleTextPane;
+    private JSplitPane rootSplitPane;
 
     private Optional<ConsolePrintStream> consolePrintStream = Optional.empty();
 
@@ -51,17 +56,19 @@ public class MainPage extends JFrame {
         this.databaseConnection = databaseConnection;
 
         $$$setupUI$$$();
+
         setTitle("Titel hier einfügen");
         setContentPane(root);
-        mainSplitPane.setDividerLocation(250);
+
+        getConsoleOutputStream().printlnStamped("Willkommen!");
+
+        rootSplitPane.setDividerLocation(500);
+        mainSplitPane.setDividerLocation(500);
+        splitPaneWithEditor.setDividerLocation(450);
 
         setJMenuBar(createMenuBar());
 
-        consolePrintStream = Optional.of(new ConsolePrintStream(new ConsoleOutputStream(consoleTextPane)));
-        getConsoleOutputStream().printlnStamped("Willkommen!");
-
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        //setLocationRelativeTo(null);
         setVisible(true);
         setSize(1280, 640);
     }
@@ -133,6 +140,10 @@ public class MainPage extends JFrame {
     }
 
     private void createUIComponents() {
+        consoleTextPane = new JTextPane();
+        consoleTextPane.setContentType("text/plain;charset=UTF-8");
+        consolePrintStream = Optional.of(new ConsolePrintStream(new ConsoleOutputStream(consoleTextPane)));
+
         // Create user-immutable JTable
         entityConfigTable = new JTable(new DefaultTableModel(databaseConnection.getEntityConfigsRaw(), new String[]{"ENTITYNAME", "PARAMETER_NAME", "PARAMETER_VALUE", "ACTIVE"})) {
             @Override
@@ -163,29 +174,60 @@ public class MainPage extends JFrame {
         try {
             ArrayList<EntityConfig> entityConfigs = databaseConnection.getEntityConfigs();
             for (EntityConfig entityConfig : entityConfigs) {
-                DefaultMutableTreeNode entityNode = new DefaultMutableTreeNode(entityConfig.getEntityName());
+                DefaultMutableTreeNode entityNode = new DefaultMutableTreeNode(String.format("%s (%s)", entityConfig.getFriendlyName(), entityConfig.getEntityName()));
                 DefaultMutableTreeNode paramsNode = new DefaultMutableTreeNode("Parameter");
+                DefaultMutableTreeNode locationsNode = new DefaultMutableTreeNode("Standorte");
+                DefaultMutableTreeNode orgsNode = new DefaultMutableTreeNode("Organisationen");
+
                 entityNode.add(paramsNode);
                 entityConfig.getParameters().forEach((param, value) -> {
-                    DefaultMutableTreeNode paramNode = new DefaultMutableTreeNode(new TreeParameterNode(this, param, value));
-
-                    explorer.getSelectionModel().addTreeSelectionListener(e -> {
-                        DefaultMutableTreeNode node = (DefaultMutableTreeNode) explorer.getLastSelectedPathComponent();
-                        String parameterValue = entityConfig.getParameters().get(node.getUserObject().toString());
-
-                    });
+                    DefaultMutableTreeNode paramNode = new DefaultMutableTreeNode(new TreeParameterNode(param, value));
                     paramsNode.add(paramNode);
                 });
 
+                entityNode.add(locationsNode);
+                entityConfig.getLocations().forEach(location -> locationsNode.add(new DefaultMutableTreeNode(new TreeLocationNode(location))));
+
+                entityNode.add(orgsNode);
+
+                //DefaultMutableTreeNode departmentsNode = new DefaultMutableTreeNode("Abteilungen");
+                //orgsNode.add(departmentsNode);
+                //entityConfig.getOrganisations().forEach(org -> departmentsNode.add(new DefaultMutableTreeNode(new TreeOrgNode(org))));
+
+                //structureOrgs(orgsNode, entityConfig.getOrganisations().stream().filter(organisation -> organisation.getOrgId() > 1).collect(Collectors.toList()));
                 rootNode.add(entityNode);
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, e.getMessage(), "Fehler", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
             dispose();
             System.exit(1);
         }
 
         explorer.setShowsRootHandles(true);
+    }
+
+    private void structureOrgs(DefaultMutableTreeNode orgsNode, List<EntityOrganisation> organisations) {
+        // Stelle fest, welche orgs Blätter sind und welche nicht
+        int height = organisations.stream().mapToInt(EntityOrganisation::getOrgLevel).max().orElse(0);
+        HashMap<Integer, List<DefaultMutableTreeNode>> levelToNodes = new HashMap<>();
+
+        for (int i = 2; i <= height; i++) {
+            levelToNodes.computeIfAbsent(i, k -> new ArrayList<>());
+        }
+
+
+        organisations.stream().filter(organisation -> organisation.getOrgLevel() == 2)
+                .forEach(organisation -> levelToNodes.computeIfAbsent(2, integer -> new ArrayList<>()).add(new DefaultMutableTreeNode(organisation.getOrgName())));
+
+        levelToNodes.get(2).forEach(orgsNode::add);
+
+        organisations.stream().filter(organisation -> organisation.getOrgLevel() == 3)
+                .forEach(organisation -> levelToNodes.computeIfAbsent(3, integer -> new ArrayList<>()).add(new DefaultMutableTreeNode(organisation.getOrgName())));
+
+        levelToNodes.get(3).forEach(defaultMutableTreeNode -> {
+
+        });
     }
 
     public DebugWindow getDebugWindow() {
@@ -215,15 +257,15 @@ public class MainPage extends JFrame {
         createUIComponents();
         root = new JPanel();
         root.setLayout(new GridLayoutManager(2, 2, new Insets(0, 0, 0, 0), -1, -1));
-        final JSplitPane splitPane1 = new JSplitPane();
-        splitPane1.setContinuousLayout(true);
-        splitPane1.setOrientation(0);
-        root.add(splitPane1, new GridConstraints(0, 0, 2, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(200, 200), null, 0, false));
+        rootSplitPane = new JSplitPane();
+        rootSplitPane.setContinuousLayout(true);
+        rootSplitPane.setOrientation(0);
+        root.add(rootSplitPane, new GridConstraints(0, 0, 2, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(200, 200), null, 0, false));
         mainSplitPane = new JSplitPane();
         mainSplitPane.setContinuousLayout(true);
         mainSplitPane.setDividerSize(10);
         mainSplitPane.setOrientation(1);
-        splitPane1.setLeftComponent(mainSplitPane);
+        rootSplitPane.setLeftComponent(mainSplitPane);
         mainSplitPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
         final JPanel panel1 = new JPanel();
         panel1.setLayout(new GridLayoutManager(2, 1, new Insets(0, 0, 0, 0), -1, -1));
@@ -272,8 +314,7 @@ public class MainPage extends JFrame {
         final Spacer spacer2 = new Spacer();
         panel5.add(spacer2, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
         final JScrollPane scrollPane5 = new JScrollPane();
-        splitPane1.setRightComponent(scrollPane5);
-        consoleTextPane = new JTextPane();
+        rootSplitPane.setRightComponent(scrollPane5);
         consoleTextPane.setEditable(false);
         Font consoleTextPaneFont = this.$$$getFont$$$("Consolas", -1, 16, consoleTextPane.getFont());
         if (consoleTextPaneFont != null) consoleTextPane.setFont(consoleTextPaneFont);
@@ -315,6 +356,15 @@ public class MainPage extends JFrame {
 
     public static MainPage getInstance() {
         return INSTANCE;
+    }
+
+    public void writeLineToConsole(String str, boolean stamped) {
+        if (stamped) getConsoleOutputStream().printlnStamped(str);
+        else getConsoleOutputStream().println(str);
+    }
+
+    public void writeLineToConsole(String str) {
+        writeLineToConsole(str, true);
     }
 
     public JTable getEntityConfigTable() {
