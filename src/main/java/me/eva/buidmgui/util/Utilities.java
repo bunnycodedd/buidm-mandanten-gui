@@ -1,44 +1,21 @@
 package me.eva.buidmgui.util;
 
+import me.eva.buidmgui.gui.MainPage;
+
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import java.awt.*;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.stream.Stream;
 
 public class Utilities {
 
-    public static String csvToSQL(String csv, String tableName, String head, String delimiter) {
-        String[] rows = csv.split("\n");
-        String[] columns = head.split(delimiter);
-
-        StringBuilder builder = new StringBuilder("INSERT INTO " + tableName + "(");
-        for (int i = 0; i < columns.length; i++) {
-            builder.append(columns[i]);
-            if (i < columns.length - 1) {
-                builder.append(",");
-            }
-        }
-        builder.append(") VALUES (");
-        for (int i = 0; i < rows.length; i++) {
-            builder.append(rows[i]);
-            if (i < rows.length - 1) {
-                builder.append(",");
-            }
-        }
-        /*builder.append(") ON DUPLICATE KEY UPDATE ");
-        for (int i = 0; i < columns.length; i++) {
-            builder.append(columns[i]).append("=").append(rows[i]);
-            if(i < columns.length - 1) {
-                builder.append(",");
-            }
-        }*/
-        return builder.toString();
-    }
+    public static final String ENTITY_CONFIG_CSV_HEAD = "ENTITYNAME;PARAMETER_NAME;PARAMETER_VALUE;ACTIVE";
+    public static final String ENTITY_LOCATION_CSV_HEAD = "ENTITYNAME;LOCATION_ID;LOCATION_NAME;LOCATION_STREET;LOCATION_CITY;LOCATION_COUNTRY;ACTIVE";
 
     public static String treePathToString(TreeNode[] path) {
         StringBuilder builder = new StringBuilder();
@@ -67,5 +44,26 @@ public class Utilities {
             if (i > index) i++;
         });
         System.out.println(components);
+    }
+
+    public static ArrayList<String> toEntityConfigCsv() {
+        ArrayList<String> csv = new ArrayList<>();
+        String[][] data = MainPage.getInstance().getDatabaseConnection().getEntityConfigsRaw();
+
+        csv.add("# FOR TABLE: ENTITYCONFIG");
+        csv.add("# CREATED AT: " + LocalDate.now().format(DateTimeFormatter.ISO_DATE.withLocale(Locale.GERMANY)));
+
+        csv.add(ENTITY_CONFIG_CSV_HEAD);
+        for (int i = 0; i < data.length; i++) {
+            Iterator<String> iterator = Arrays.stream(data[i]).iterator();
+            StringBuilder rowBuilder = new StringBuilder();
+            do {
+                rowBuilder.append(iterator.next()).append(";");
+            } while (iterator.hasNext());
+            csv.add(rowBuilder.substring(0, rowBuilder.toString().length() - 1));
+        }
+        MainPage.getInstance().getConsoleOutputStream().printlnStamped(csv.size()-2 + " Zeilen in ENTITYCONFIG.csv geschrieben");
+
+        return csv;
     }
 }

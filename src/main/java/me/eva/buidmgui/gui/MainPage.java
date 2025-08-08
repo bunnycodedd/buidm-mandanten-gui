@@ -99,6 +99,8 @@ public class MainPage extends JFrame {
             MenuBarHandlers.handleImportEntityConfig(e, root);
         });
 
+        exportItem.addActionListener(MenuBarHandlers::handleExport);
+
         JMenuItem importEntityLocationItem = new JMenuItem("ENTITYLOCATION");
         JMenuItem importEntityOrganisationItem = new JMenuItem("ENTITYORGANISATION");
 
@@ -112,6 +114,7 @@ public class MainPage extends JFrame {
 
 
         fileMenu.add(importMenu);
+        fileMenu.add(exportItem);
 
         fileMenu.addSeparator();
 
