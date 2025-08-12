@@ -55,10 +55,9 @@ public class LoginPage extends JFrame {
     private void createUIComponents() {
         // TODO: place custom component creation code here
         hostsComboBox = new JComboBox<>();
-        hostsComboBox.addItem("192.168.178.91");
-        hostsComboBox.addItem("DEV");
-        hostsComboBox.addItem("REF");
-        hostsComboBox.addItem("PROD");
+        hostsComboBox.addItem("CC03WSV4121");
+        hostsComboBox.addItem("CC03WSV4135");
+        hostsComboBox.addItem("CC03WSV4207");
     }
 
     public JPanel getRoot() {

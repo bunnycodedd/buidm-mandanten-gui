@@ -3,20 +3,41 @@ package me.eva.buidmgui.gui.wizard;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
+import me.eva.buidmgui.model.ValueChangedListener;
+import me.eva.buidmgui.util.Utilities;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
+import javax.swing.text.Element;
 import java.awt.*;
+import java.beans.PropertyChangeEvent;
 
 public class WizardSecond extends JPanel {
 
     private JPanel root;
-    private JTextField textField1;
-    private JTextField textField2;
+    private JTextField nameField;
+    private JTextField idField;
+    private EntityCreationContext context;
 
-    public WizardSecond(LayoutManager layout) {
+    public WizardSecond(LayoutManager layout, EntityCreationContext context) {
         super(layout);
+        this.context = context;
         add(root);
+
+        Utilities.addTextfieldValueChangeListener(nameField, new ValueChangedListener(documentEvent -> {
+            context.entityName(nameField.getText());
+        }));
+        Utilities.addTextfieldValueChangeListener(idField, new ValueChangedListener(documentEvent -> {
+            context.entityId(idField.getText());
+        }));
+    }
+
+    public JTextField getNameField() {
+        return nameField;
+    }
+
+    public JTextField getIdField() {
+        return idField;
     }
 
     {
@@ -43,13 +64,13 @@ public class WizardSecond extends JPanel {
         final JLabel label1 = new JLabel();
         label1.setText("Name");
         panel1.add(label1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(32, 75), null, 0, false));
-        textField1 = new JTextField();
-        panel1.add(textField1, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        nameField = new JTextField();
+        panel1.add(nameField, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         final Spacer spacer1 = new Spacer();
         panel1.add(spacer1, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(11, 258), null, 0, false));
-        textField2 = new JTextField();
-        textField2.setHorizontalAlignment(2);
-        panel1.add(textField2, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(100, -1), null, 0, false));
+        idField = new JTextField();
+        idField.setHorizontalAlignment(2);
+        panel1.add(idField, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(100, -1), null, 0, false));
         final JLabel label2 = new JLabel();
         label2.setText("ID:");
         panel1.add(label2, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(25, 17), null, 0, false));

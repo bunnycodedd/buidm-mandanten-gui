@@ -26,7 +26,7 @@
               <text value="Name"/>
             </properties>
           </component>
-          <component id="78ea3" class="javax.swing.JTextField" binding="textField1" default-binding="true">
+          <component id="78ea3" class="javax.swing.JTextField" binding="nameField">
             <constraints>
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
@@ -41,7 +41,7 @@
               </grid>
             </constraints>
           </vspacer>
-          <component id="ed8a2" class="javax.swing.JTextField" binding="textField2" default-binding="true">
+          <component id="ed8a2" class="javax.swing.JTextField" binding="idField">
             <constraints>
               <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="0" indent="0" use-parent-layout="false">
                 <preferred-size width="100" height="-1"/>

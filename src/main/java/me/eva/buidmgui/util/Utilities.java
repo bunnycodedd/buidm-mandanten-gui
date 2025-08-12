@@ -1,6 +1,8 @@
 package me.eva.buidmgui.util;
 
 import me.eva.buidmgui.gui.MainPage;
+import me.eva.buidmgui.gui.wizard.EntityCreationContext;
+import me.eva.buidmgui.model.ValueChangedListener;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -62,8 +64,18 @@ public class Utilities {
             } while (iterator.hasNext());
             csv.add(rowBuilder.substring(0, rowBuilder.toString().length() - 1));
         }
-        MainPage.getInstance().getConsoleOutputStream().printlnStamped(csv.size()-2 + " Zeilen in ENTITYCONFIG.csv geschrieben");
+        MainPage.getInstance().getConsoleOutputStream().printlnStamped(csv.size() - 2 + " Zeilen in ENTITYCONFIG.csv geschrieben");
 
         return csv;
+    }
+
+    public static void addTextfieldValueChangeListener(JTextField field, ValueChangedListener listener) {
+        field.getDocument().addDocumentListener(listener);
+    }
+
+    public static void addTextfieldValueChangeListener(JTextField field, Runnable runnable) {
+        field.getDocument().addDocumentListener(new ValueChangedListener(documentEvent -> {
+            runnable.run();
+        }));
     }
 }

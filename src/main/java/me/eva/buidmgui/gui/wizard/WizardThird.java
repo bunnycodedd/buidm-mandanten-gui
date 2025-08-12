@@ -3,6 +3,7 @@ package me.eva.buidmgui.gui.wizard;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
+import me.eva.buidmgui.util.Utilities;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -12,16 +13,59 @@ public class WizardThird extends JPanel {
 
     private JPanel root;
     private JTextPane hierKannGgfDerTextPane;
-    private JTextField textField1;
-    private JTextField textField2;
-    private JTextField textField3;
-    private JTextField textField4;
-    private JTextField textField5;
-    private JTextField textField6;
+    private JTextField streetField;
+    private JTextField numberField;
+    private JTextField countryField;
+    private JTextField telExternalField;
+    private JTextField telInternalField;
+    private JTextField faxField;
+    private JTextField postcodeField;
+    private JTextField cityField;
 
-    public WizardThird(LayoutManager layout) {
+    public WizardThird(LayoutManager layout, EntityCreationContext context) {
         super(layout);
         add(root);
+
+        Utilities.addTextfieldValueChangeListener(streetField, () -> context.locationStreet(streetField.getText()));
+        Utilities.addTextfieldValueChangeListener(numberField, () -> context.locationNumber(numberField.getText()));
+        Utilities.addTextfieldValueChangeListener(cityField, () -> context.locationCity(cityField.getText()));
+        Utilities.addTextfieldValueChangeListener(countryField, () -> context.locationCountry(countryField.getText()));
+        Utilities.addTextfieldValueChangeListener(postcodeField, () -> context.locationPostcode(postcodeField.getText()));
+        Utilities.addTextfieldValueChangeListener(telInternalField, () -> context.telInternal(telInternalField.getText()));
+        Utilities.addTextfieldValueChangeListener(telExternalField, () -> context.telExternal(telExternalField.getText()));
+        Utilities.addTextfieldValueChangeListener(faxField, () -> context.fax(faxField.getText()));
+    }
+
+    public JTextField getStreetField() {
+        return streetField;
+    }
+
+    public JTextField getNumberField() {
+        return numberField;
+    }
+
+    public JTextField getCountryField() {
+        return countryField;
+    }
+
+    public JTextField getTelExternalField() {
+        return telExternalField;
+    }
+
+    public JTextField getTelInternalField() {
+        return telInternalField;
+    }
+
+    public JTextField getFaxField() {
+        return faxField;
+    }
+
+    public JTextField getPostcodeField() {
+        return postcodeField;
+    }
+
+    public JTextField getCityField() {
+        return cityField;
     }
 
     {
@@ -48,33 +92,33 @@ public class WizardThird extends JPanel {
         final JPanel panel2 = new JPanel();
         panel2.setLayout(new GridLayoutManager(2, 6, new Insets(0, 0, 0, 0), -1, -1));
         panel1.add(panel2, new GridConstraints(1, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        textField1 = new JTextField();
-        textField1.setText("");
-        panel2.add(textField1, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        streetField = new JTextField();
+        streetField.setText("");
+        panel2.add(streetField, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         final JLabel label1 = new JLabel();
         label1.setText("Hausnummer");
         panel2.add(label1, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        textField2 = new JTextField();
-        panel2.add(textField2, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        numberField = new JTextField();
+        panel2.add(numberField, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         final JLabel label2 = new JLabel();
         label2.setText("Straße");
         panel2.add(label2, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JLabel label3 = new JLabel();
         label3.setText("Postleitzahl");
         panel2.add(label3, new GridConstraints(0, 4, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final JTextField textField7 = new JTextField();
-        panel2.add(textField7, new GridConstraints(0, 5, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        postcodeField = new JTextField();
+        panel2.add(postcodeField, new GridConstraints(0, 5, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         final JLabel label4 = new JLabel();
-        label4.setText("Stadt");
+        label4.setText("Ort");
         panel2.add(label4, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final JTextField textField8 = new JTextField();
-        textField8.setText("");
-        panel2.add(textField8, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        cityField = new JTextField();
+        cityField.setText("");
+        panel2.add(cityField, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         final JLabel label5 = new JLabel();
         label5.setText("Land");
         panel2.add(label5, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        textField3 = new JTextField();
-        panel2.add(textField3, new GridConstraints(1, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        countryField = new JTextField();
+        panel2.add(countryField, new GridConstraints(1, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         final JPanel panel3 = new JPanel();
         panel3.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         panel1.add(panel3, new GridConstraints(0, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
@@ -89,19 +133,19 @@ public class WizardThird extends JPanel {
         final JLabel label6 = new JLabel();
         label6.setText("Telefonnummer (extrern)");
         panel4.add(label6, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        textField4 = new JTextField();
-        textField4.setText("");
-        panel4.add(textField4, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        telExternalField = new JTextField();
+        telExternalField.setText("");
+        panel4.add(telExternalField, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         final JLabel label7 = new JLabel();
         label7.setText("Telefonnummer (intern)");
         panel4.add(label7, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        textField5 = new JTextField();
-        panel4.add(textField5, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        telInternalField = new JTextField();
+        panel4.add(telInternalField, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         final JLabel label8 = new JLabel();
         label8.setText("FAX");
         panel4.add(label8, new GridConstraints(0, 4, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        textField6 = new JTextField();
-        panel4.add(textField6, new GridConstraints(0, 5, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        faxField = new JTextField();
+        panel4.add(faxField, new GridConstraints(0, 5, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
     }
 
     /**

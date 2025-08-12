@@ -15,6 +15,7 @@ public class ConsoleOutputStream extends OutputStream {
 
     @Override
     public void write(int b) throws IOException {
+        // ü -> ue
         textPane.setText(textPane.getText() + (char) b);
     }
 

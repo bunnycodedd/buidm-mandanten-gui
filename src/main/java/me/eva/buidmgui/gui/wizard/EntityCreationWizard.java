@@ -24,8 +24,6 @@ public class EntityCreationWizard extends JDialog {
         setTitle("Entity Creation Wizard");
         setResizable(false);
 
-        this.controller = new WizardController(this);
-
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException |
@@ -33,17 +31,9 @@ public class EntityCreationWizard extends JDialog {
             throw new RuntimeException(e);
         }
 
-        WizardFirst first = new WizardFirst(mainPanel.getLayout());
-        WizardSecond second = new WizardSecond(mainPanel.getLayout());
-        WizardThird third = new WizardThird(mainPanel.getLayout());
+        this.controller = new WizardController(this, mainPanel.getLayout());
 
-        mainPanel.getLayout().addLayoutComponent(WizardController.FIRST, first);
-        mainPanel.getLayout().addLayoutComponent(WizardController.SECOND, second);
-        mainPanel.getLayout().addLayoutComponent(WizardController.THIRD, third);
-
-        mainPanel.add(first);
-        mainPanel.add(second);
-        mainPanel.add(third);
+        controller.getPanelById().values().forEach(mainPanel::add);
 
         nextButton.addActionListener(e -> onNext());
         backButton.addActionListener(e -> onBack());
