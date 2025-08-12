@@ -3,16 +3,15 @@ package me.eva.buidmgui;
 import me.eva.buidmgui.gui.LoginPage;
 import me.eva.buidmgui.gui.MainPage;
 import me.eva.buidmgui.net.DatabaseConnection;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.sql.SQLException;
+import java.util.logging.Logger;
 
 
 public class Main {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger("SYSTEM");
+    public static final Logger LOGGER = Logger.getLogger("SYSTEM");
     public static String ARG_USER;
     public static String ARG_PASSWORD;
     public static String ARG_HOST;

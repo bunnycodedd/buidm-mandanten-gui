@@ -54,7 +54,7 @@ public class DatabaseConnection {
             list.toArray(rowsArray);
             return rowsArray;
         } catch (SQLException e) {
-            Main.LOGGER.error(e.getMessage());
+            Main.LOGGER.severe(e.getMessage());
             return new String[][]{};
         }
     }
@@ -79,7 +79,7 @@ public class DatabaseConnection {
             list.toArray(rowsArray);
             return rowsArray;
         } catch (SQLException e) {
-            Main.LOGGER.error(e.getMessage());
+            Main.LOGGER.severe(e.getMessage());
             return new String[][]{};
         }
     }
@@ -104,7 +104,7 @@ public class DatabaseConnection {
             list.toArray(rowsArray);
             return rowsArray;
         } catch (SQLException e) {
-            Main.LOGGER.error(e.getMessage());
+            Main.LOGGER.severe(e.getMessage());
             return new String[][]{};
         }
     }

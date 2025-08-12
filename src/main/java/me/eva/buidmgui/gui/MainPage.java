@@ -4,6 +4,7 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import me.eva.buidmgui.controller.MenuBarHandlers;
+import me.eva.buidmgui.gui.wizard.EntityCreationWizard;
 import me.eva.buidmgui.model.*;
 import me.eva.buidmgui.net.DatabaseConnection;
 import me.eva.buidmgui.util.EntityConfigTableModel;
@@ -86,6 +87,13 @@ public class MainPage extends JFrame {
     private JMenu createFileMenu() {
         JMenu fileMenu = new JMenu("Datei");
         JMenuItem newItem = new JMenuItem("Neuer Mandant");
+        newItem.addActionListener(e -> {
+            EntityCreationWizard wizard = new EntityCreationWizard();
+            wizard.setModal(true);
+            wizard.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
+            wizard.setLocationRelativeTo(null);
+            wizard.setVisible(true);
+        });
 
         JMenu importMenu = new JMenu("Importieren...");
         JMenuItem exportItem = new JMenuItem("Exportieren");

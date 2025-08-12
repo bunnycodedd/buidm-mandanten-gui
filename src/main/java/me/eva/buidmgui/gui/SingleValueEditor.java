@@ -17,6 +17,7 @@ public class SingleValueEditor extends JPanel {
     private boolean dirty;
 
     public SingleValueEditor(String valueName, String currentValue) {
+        //super(MainPage.getInstance().getLayout());
         $$$setupUI$$$();
         valueLabel.setText("Value: " + valueName);
         valueEditField.setText(currentValue);

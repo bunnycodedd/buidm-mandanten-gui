@@ -173,7 +173,7 @@ public class ConverterPage extends JDialog {
                                 textPane.setText(textPane.getText() + line + System.lineSeparator());
                             });
                 } catch (Exception ex) {
-                    Main.LOGGER.error("[" + ex.getClass().getSimpleName() + "] " + ex.getMessage());
+                    Main.LOGGER.severe("[" + ex.getClass().getSimpleName() + "] " + ex.getMessage());
                     JOptionPane.showMessageDialog(parent, "Es gab einen Fehler beim Lesen der Datei. Sind alle Zeilen konform mit dem Tabellenkopf?", "Konvertierungsfehler", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
