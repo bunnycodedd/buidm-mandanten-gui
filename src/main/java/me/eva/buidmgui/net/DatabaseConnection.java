@@ -1,5 +1,6 @@
 package me.eva.buidmgui.net;
 
+import com.mysql.cj.xdevapi.SqlStatement;
 import me.eva.buidmgui.Main;
 import me.eva.buidmgui.gui.MainPage;
 import me.eva.buidmgui.model.EntityConfig;
@@ -114,11 +115,11 @@ public class DatabaseConnection {
 
         PreparedStatement entityStatement = connection.prepareStatement("SELECT * FROM ENTITYCONFIGURATION WHERE PARAMETER_NAME='ENTITYNAME'");
         ArrayList<EntityConfig> uniqueEntities = new ArrayList<>();
-
-        HashMap<String, String> parameters = new HashMap<>();
-
         ResultSet entityResultSet = entityStatement.executeQuery();
+
         while (entityResultSet.next()) {
+            HashMap<String, String> parameters = new HashMap<>();
+
             String entityName = entityResultSet.getString("ENTITYNAME");
             String mappedName = entityResultSet.getString("PARAMETER_VALUE");
 
@@ -231,5 +232,8 @@ public class DatabaseConnection {
         if (changedRows == 0) {
             System.out.println("No changes were made.");
         }
+    }
+    public boolean execute(String sql) throws SQLException {
+        return connection.prepareStatement(sql).execute();
     }
 }

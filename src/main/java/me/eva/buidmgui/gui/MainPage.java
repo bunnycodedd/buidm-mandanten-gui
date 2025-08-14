@@ -17,13 +17,13 @@ import javax.swing.text.StyleContext;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeSelectionModel;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 public class MainPage extends JFrame {
     private JPanel root;
@@ -41,8 +41,9 @@ public class MainPage extends JFrame {
     private JSplitPane rootSplitPane;
 
     private Optional<ConsolePrintStream> consolePrintStream = Optional.empty();
+    private DefaultMutableTreeNode rootNode;
 
-    private boolean dirty = false;
+    private boolean isUpdating = false;
 
     private EntityConfigTableModel entityConfigTableModel;
 
@@ -150,12 +151,17 @@ public class MainPage extends JFrame {
         return dataMenu;
     }
 
-    private void createUIComponents() {
-        consoleTextPane = new JTextPane();
-        consoleTextPane.setContentType("text/plain;charset=UTF-8");
-        consolePrintStream = Optional.of(new ConsolePrintStream(new ConsoleOutputStream(consoleTextPane)));
+    public void update() {
+        root.setEnabled(false);
+        buildTree(rootNode);
+        displayTables();
+        revalidate();
+        repaint();
+        root.setEnabled(true);
+        writeLineToConsole("Updated!");
+    }
 
-        // Create user-immutable JTable
+    private void displayTables() {
         entityConfigTable = new JTable(new DefaultTableModel(databaseConnection.getEntityConfigsRaw(), new String[]{"ENTITYNAME", "PARAMETER_NAME", "PARAMETER_VALUE", "ACTIVE"})) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -175,13 +181,29 @@ public class MainPage extends JFrame {
                 return false;
             }
         };
+    }
+
+    private void createUIComponents() {
+        consoleTextPane = new JTextPane();
+        consoleTextPane.setContentType("text/plain;charset=UTF-8");
+        consolePrintStream = Optional.of(new ConsolePrintStream(new ConsoleOutputStream(consoleTextPane)));
+
+        // Create user-immutable JTable
+        displayTables();
 
         // ###################### TREE ######################
-        DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("Mandanten");
+        this.rootNode = new DefaultMutableTreeNode("Mandanten");
         explorer = new JTree(rootNode);
         explorer.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         explorer.addTreeSelectionListener(new TreeSelectionListenerImpl(this));
 
+        buildTree(rootNode);
+
+        explorer.setShowsRootHandles(true);
+    }
+
+    private void buildTree(DefaultMutableTreeNode rootNode) {
+        rootNode.removeAllChildren();
         try {
             ArrayList<EntityConfig> entityConfigs = databaseConnection.getEntityConfigs();
             for (EntityConfig entityConfig : entityConfigs) {
@@ -214,8 +236,6 @@ public class MainPage extends JFrame {
             dispose();
             System.exit(1);
         }
-
-        explorer.setShowsRootHandles(true);
     }
 
     private void structureOrgs(DefaultMutableTreeNode orgsNode, List<EntityOrganisation> organisations) {
@@ -247,14 +267,6 @@ public class MainPage extends JFrame {
 
     public ConsolePrintStream getConsoleOutputStream() {
         return consolePrintStream.orElseThrow(() -> new IllegalStateException("Console is not yet fully initialized"));
-    }
-
-    public boolean isDirty() {
-        return dirty;
-    }
-
-    public void makeDirty(boolean dirty) {
-        this.dirty = dirty;
     }
 
     /**

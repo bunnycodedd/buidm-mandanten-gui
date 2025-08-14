@@ -69,6 +69,23 @@ public class EntityCreationContext {
         return this;
     }
 
+    @Override
+    public String toString() {
+        return "EntityCreationContext{" +
+                "entityName='" + entityName + '\'' +
+                ", entityId='" + entityId + '\'' +
+                ", locationName='" + locationName + '\'' +
+                ", locationStreet='" + locationStreet + '\'' +
+                ", locationNumber='" + locationNumber + '\'' +
+                ", locationPostcode='" + locationPostcode + '\'' +
+                ", locationCity='" + locationCity + '\'' +
+                ", locationCountry='" + locationCountry + '\'' +
+                ", telInternal='" + telInternal + '\'' +
+                ", telExternal='" + telExternal + '\'' +
+                ", fax='" + fax + '\'' +
+                '}';
+    }
+
     public String getFax() {
         return fax;
     }

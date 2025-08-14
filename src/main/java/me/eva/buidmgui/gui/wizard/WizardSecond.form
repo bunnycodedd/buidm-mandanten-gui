@@ -41,7 +41,7 @@
               </grid>
             </constraints>
           </vspacer>
-          <component id="ed8a2" class="javax.swing.JTextField" binding="idField">
+          <component id="84aaf" class="javax.swing.JFormattedTextField" binding="idField" custom-create="true">
             <constraints>
               <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="0" indent="0" use-parent-layout="false">
                 <preferred-size width="100" height="-1"/>

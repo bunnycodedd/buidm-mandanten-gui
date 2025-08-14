@@ -42,7 +42,7 @@
                   <text value="Hausnummer"/>
                 </properties>
               </component>
-              <component id="6f1e1" class="javax.swing.JTextField" binding="numberField">
+              <component id="6f1e1" class="javax.swing.JTextField" binding="numberField" custom-create="true">
                 <constraints>
                   <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="0" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
@@ -66,7 +66,7 @@
                   <text value="Postleitzahl"/>
                 </properties>
               </component>
-              <component id="2bd41" class="javax.swing.JTextField" binding="postcodeField">
+              <component id="c89d0" class="javax.swing.JFormattedTextField" binding="postcodeField" custom-create="true">
                 <constraints>
                   <grid row="0" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="0" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
@@ -110,7 +110,7 @@
               </component>
             </children>
           </grid>
-          <grid id="11d8e" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="11d8e" layout-manager="GridLayoutManager" row-count="2" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -120,13 +120,45 @@
             <children>
               <component id="a8ff7" class="javax.swing.JTextPane" binding="hierKannGgfDerTextPane" default-binding="true">
                 <constraints>
-                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="1" fill="1" indent="0" use-parent-layout="false">
+                  <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="6" hsize-policy="6" anchor="1" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="112"/>
                   </grid>
                 </constraints>
                 <properties>
                   <text value="Hier kann ggf. der Hauptstandort des Mandanten angegeben werden, also den Standort, den man beispielsweise bei einer Google-Suche zuerst findet. &#10;&#10;Weitere Nebenstandorte können im Nachhinein ergänzt werden." noi18n="true"/>
                 </properties>
+              </component>
+              <component id="6de5b" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Standortname:"/>
+                </properties>
+              </component>
+              <component id="5db01" class="javax.swing.JTextField" binding="textField1" default-binding="true">
+                <constraints>
+                  <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                    <preferred-size width="150" height="-1"/>
+                  </grid>
+                </constraints>
+                <properties/>
+              </component>
+              <component id="d07" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Standort-ID:"/>
+                </properties>
+              </component>
+              <component id="99a72" class="javax.swing.JFormattedTextField" binding="idField" custom-create="true">
+                <constraints>
+                  <grid row="1" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                    <preferred-size width="150" height="-1"/>
+                  </grid>
+                </constraints>
+                <properties/>
               </component>
             </children>
           </grid>
@@ -151,7 +183,7 @@
                   <text value="Telefonnummer (extrern)"/>
                 </properties>
               </component>
-              <component id="53eb3" class="javax.swing.JTextField" binding="telExternalField">
+              <component id="886bc" class="javax.swing.JFormattedTextField" binding="telExternalField" custom-create="true">
                 <constraints>
                   <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="0" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
@@ -169,7 +201,7 @@
                   <text value="Telefonnummer (intern)"/>
                 </properties>
               </component>
-              <component id="630ce" class="javax.swing.JTextField" binding="telInternalField">
+              <component id="1cc5e" class="javax.swing.JFormattedTextField" binding="telInternalField" custom-create="true">
                 <constraints>
                   <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
@@ -185,7 +217,7 @@
                   <text value="FAX"/>
                 </properties>
               </component>
-              <component id="9c8d8" class="javax.swing.JTextField" binding="faxField">
+              <component id="7d71" class="javax.swing.JFormattedTextField" binding="faxField" custom-create="true">
                 <constraints>
                   <grid row="0" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>

@@ -1,12 +1,13 @@
 package me.eva.buidmgui.gui.wizard;
 
-import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableMap;
+import me.eva.buidmgui.gui.MainPage;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.HashSet;
+import java.awt.event.ActionListener;
+import java.sql.SQLException;
 
 public class WizardController {
 
@@ -14,13 +15,14 @@ public class WizardController {
     public static final String SECOND = "panel_second";
     public static final String THIRD = "panel_third";
     public static final String FOURTH = "panel_fourth";
+    public static final String FINAL = "panel_final";
 
     private static final ImmutableBiMap<String, String> PANEL_KEYS =
             ImmutableBiMap.<String, String>builder()
                     .put(FIRST, SECOND)
                     .put(SECOND, THIRD)
                     .put(THIRD, FOURTH)
-                    .put(FOURTH, "null")
+                    .put(FOURTH, FINAL)
                     .build();
 
     private final EntityCreationContext context;
@@ -41,6 +43,7 @@ public class WizardController {
                 .put(SECOND, new WizardSecond(layout, context))
                 .put(THIRD, new WizardThird(layout, context))
                 .put(FOURTH, new WizardFourth(layout, context))
+                .put(FINAL, new WizardFinal(layout, wizard))
                 .build();
 
         panelById.forEach(layout::addLayoutComponent);
@@ -65,7 +68,30 @@ public class WizardController {
         currentPanelId = PANEL_KEYS.get(currentPanelId);
 
         if(currentPanelId.equals(FOURTH)) {
+            runBeforeCheckupPanel();
+        }
+
+        if(currentPanelId.equals(FINAL)) {
             runBeforeLastPanel();
+            wizard.getNextButton().setEnabled(true);
+            wizard.getNextButton().setText("Ausführen");
+            for (ActionListener actionListener : wizard.getNextButton().getActionListeners()) {
+                wizard.getNextButton().removeActionListener(actionListener);
+            }
+
+            wizard.getNextButton().addActionListener(e -> {
+                wizard.dispose();
+
+                for (String sql : ((WizardFinal) panelById.get(FINAL)).generateSql(context)) {
+                    MainPage.getInstance().writeLineToConsole(sql);
+                    try {
+                       MainPage.getInstance().getDatabaseConnection().execute(sql);
+                    } catch (SQLException ex) {
+                        ex.printStackTrace();
+                        JOptionPane.showMessageDialog(MainPage.getInstance(), ex.getMessage(), "Fehler", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            });
         }
 
         ((CardLayout) wizard.getMainPanel().getLayout()).show(wizard.getMainPanel(), currentPanelId);
@@ -79,11 +105,15 @@ public class WizardController {
     }
 
     private void updateButtons() {
-        wizard.getNextButton().setEnabled(PANEL_KEYS.get(currentPanelId) != null);
+        wizard.getNextButton().setEnabled((PANEL_KEYS.get(currentPanelId) != null));
         wizard.getBackButton().setEnabled(PANEL_KEYS.inverse().get(currentPanelId) != null);
+
+        if(currentPanelId.equals(FINAL)) {
+            wizard.getNextButton().setEnabled(true);
+        }
     }
 
-    private void runBeforeLastPanel() {
+    private void runBeforeCheckupPanel() {
         WizardFourth wizardFourth = (WizardFourth) getCurrentPanel();
         wizardFourth.getNameValueLabel().setText(context.getEntityName());
         wizardFourth.getIdValueLabel().setText(context.getEntityId());
@@ -93,5 +123,10 @@ public class WizardController {
         wizardFourth.getExternalValueLabel().setText(context.getTelExternal());
         wizardFourth.getFaxValueLabel().setText(context.getFax());
         wizardFourth.getOrgNameValueLabel().setText(context.getEntityName());
+    }
+
+    private void runBeforeLastPanel() {
+        WizardFinal wizardFinal = (WizardFinal) getCurrentPanel();
+        wizardFinal.generateSql(context);
     }
 }
